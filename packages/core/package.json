@@ -1,0 +1,22 @@
+{
+  "name": "@echosign/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21",
+    "@noble/ed25519": "^2.1",
+    "@noble/hashes": "^1.4"
+  }
+}
