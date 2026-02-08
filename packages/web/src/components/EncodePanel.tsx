@@ -100,7 +100,7 @@ export function EncodePanel() {
           value={transcript || textInput}
           onChange={(e) => { setTextInput(e.target.value); setTranscript(''); }}
           placeholder="Or type your emergency message here..."
-          className="w-full h-24 bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-amber-500"
+          className="w-full h-24 bg-brand-card-dark border border-brand-border rounded-input p-3 text-sm resize-none focus:outline-none focus:border-primary"
         />
       </div>
 
@@ -108,25 +108,25 @@ export function EncodePanel() {
       <button
         onClick={handleEncode}
         disabled={!!loading || (!transcript && !textInput)}
-        className="px-6 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-6 py-2 bg-primary text-white font-bold rounded-button hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed active:animate-button-press"
       >
         {loading || 'Encode Message'}
       </button>
 
-      {error && <div className="text-red-400 text-sm">{error}</div>}
+      {error && <div className="text-error text-sm">{error}</div>}
 
       {/* Encoded result */}
       {encoded && (
         <div className="space-y-4">
           <div>
             <div className="text-sm text-gray-400 mb-1">Semantic Code (24 bytes):</div>
-            <div className="font-mono text-cyan-400 bg-neutral-800 p-3 rounded-lg break-all">
+            <div className="font-mono text-secondary bg-brand-card-dark p-3 rounded-input break-all">
               {encoded.hex}
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-400 mb-1">Fields:</div>
-            <pre className="text-xs text-gray-300 bg-neutral-800 p-3 rounded-lg overflow-auto">
+            <pre className="text-xs text-gray-300 bg-brand-card-dark p-3 rounded-input overflow-auto">
               {JSON.stringify(encoded.fields, null, 2)}
             </pre>
           </div>
@@ -135,15 +135,15 @@ export function EncodePanel() {
           <button
             onClick={handleTransmit}
             disabled={acoustic.isPlaying}
-            className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 disabled:opacity-50"
+            className="px-6 py-2 bg-transmit text-white font-bold rounded-button hover:bg-transmit-dark disabled:opacity-50 active:animate-button-press"
           >
             {acoustic.isPlaying ? `Transmitting... ${Math.round(acoustic.progress * 100)}%` : 'Sign & Transmit'}
           </button>
 
           {acoustic.isPlaying && (
-            <div className="w-full bg-neutral-700 rounded-full h-2">
+            <div className="w-full bg-brand-border rounded-full h-2">
               <div
-                className="bg-red-600 h-2 rounded-full transition-all"
+                className="bg-transmit h-2 rounded-full transition-all"
                 style={{ width: `${acoustic.progress * 100}%` }}
               />
             </div>
@@ -153,12 +153,12 @@ export function EncodePanel() {
           <button
             onClick={handleAuditSync}
             disabled={auditLoading}
-            className="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 disabled:opacity-50"
+            className="px-6 py-2 bg-primary text-white font-bold rounded-button hover:bg-primary-dark disabled:opacity-50 active:animate-button-press"
           >
             {auditLoading ? 'Syncing to Solana...' : 'Sync to Blockchain'}
           </button>
 
-          {auditError && <div className="text-red-400 text-sm">{auditError}</div>}
+          {auditError && <div className="text-error text-sm">{auditError}</div>}
 
           {auditUrl && (
             <div className="text-sm">
@@ -167,7 +167,7 @@ export function EncodePanel() {
                 href={auditUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-purple-400 underline break-all"
+                className="text-primary underline break-all"
               >
                 {auditUrl}
               </a>

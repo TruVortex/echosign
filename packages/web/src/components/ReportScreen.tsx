@@ -236,12 +236,12 @@ const ReportScreen: React.FC<ReportScreenProps> = ({ onIncidentCapture, isDarkMo
                         onTouchEnd={stopRecording}
                         className={`ptt-outer relative w-64 h-64 rounded-full p-3 transition-all duration-150 active:scale-[0.97] ${isRecording ? 'ptt-outer-active' : ''}`}
                     >
-                        <div className="ptt-inner w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden dark:bg-brand-card-dark transition-colors">
+                        <div className="ptt-inner w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-brand-card-light dark:bg-brand-card-dark transition-colors">
                             <div className={`absolute inset-0 bg-primary/10 transition-opacity duration-300 ${isRecording ? 'opacity-100' : 'opacity-0'}`}></div>
-                            <span className={`material-symbols-outlined text-6xl mb-1 ${isRecording ? 'text-primary' : 'text-brand-dark dark:text-gray-300'}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 600" }}>mic</span>
+                            <span className={`material-symbols-outlined text-6xl mb-1 ${isRecording ? 'text-primary' : 'text-gray-700 dark:text-gray-300'}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 600" }}>mic</span>
                             <div className="flex flex-col items-center">
-                                <span className="text-brand-dark dark:text-gray-500 font-extrabold text-xs tracking-[0.15em]">{isRecording ? 'RECORDING' : 'PUSH TO'}</span>
-                                <span className="text-brand-dark dark:text-white font-extrabold text-xl tracking-tighter uppercase">{isRecording ? 'RELEASE' : 'REPORT'}</span>
+                                <span className="text-gray-700 dark:text-gray-500 font-extrabold text-xs tracking-[0.15em]">{isRecording ? 'RECORDING' : 'PUSH TO'}</span>
+                                <span className="text-gray-700 dark:text-white font-extrabold text-xl tracking-tighter uppercase">{isRecording ? 'RELEASE' : 'REPORT'}</span>
                             </div>
                             <div className="absolute bottom-6 w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
                         </div>
@@ -400,8 +400,14 @@ const ReportScreen: React.FC<ReportScreenProps> = ({ onIncidentCapture, isDarkMo
                                             <p className="text-[11px] font-mono text-primary/80 font-bold mt-1">CODE: {classification.code} // PRIORITY: {classification.priority}</p>
                                         </div>
                                     </div>
-                                    <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 active:bg-white/20 transition-colors">
-                                        <span className="material-symbols-outlined text-white/70">chevron_right</span>
+                                    <button
+                                        onClick={() => {
+                                            console.log('Editing functionality is not yet implemented.');
+                                            alert('Editing classification is not yet implemented.');
+                                        }}
+                                        className="w-10 h-10 flex items-center justify-center rounded-button bg-white/5 border border-white/10 active:bg-white/20 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-white/70">edit</span>
                                     </button>
                                 </div>
                             </div>

@@ -107,34 +107,32 @@ const App: React.FC = () => {
         <nav className="flex items-center justify-around px-8 py-4 pb-8 bg-brand-card-light dark:bg-brand-card-dark border-t border-brand-border/10 dark:border-brand-border/30 transition-colors z-50">
           <button
             onClick={() => setCurrentScreen('report')}
-            className={`flex flex-col items-center gap-1.5 group transition-opacity ${currentScreen === 'report' ? 'opacity-100' : 'opacity-40'}`}
+            className={`flex flex-col items-center gap-1.5 group transition-opacity duration-200 ${currentScreen === 'report' ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'} active:animate-button-press`}
           >
-            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'report' ? 'bg-primary/20 dark:bg-primary/10' : 'bg-transparent'}`}>
-              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'report' ? 'text-primary' : 'text-brand-dark dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'report' ? "'FILL' 1" : "" }}>mic</span>
+            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'report' ? 'bg-primary/10' : 'bg-transparent'}`}>
+              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'report' ? 'text-primary' : 'text-gray-600 dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'report' ? "'FILL' 1" : "" }}>mic</span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider text-brand-dark dark:text-gray-400">Record</span>
+            <span className="text-[9px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-400">Record</span>
           </button>
 
           <button
             onClick={() => setCurrentScreen('alerts')}
-            className={`flex flex-col items-center gap-1.5 group transition-opacity ${currentScreen === 'alerts' ? 'opacity-100' : 'opacity-40'}`}
+            className={`flex flex-col items-center gap-1.5 group transition-opacity duration-200 ${currentScreen === 'alerts' ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'} active:animate-button-press`}
           >
-            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'alerts' ? 'bg-primary/20 dark:bg-primary/10' : 'bg-transparent'}`}>
-              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'alerts' ? 'text-primary' : 'text-brand-dark dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'alerts' ? "'FILL' 1" : "" }}>notifications_active</span>
+            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'alerts' ? 'bg-primary/10' : 'bg-transparent'}`}>
+              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'alerts' ? 'text-primary' : 'text-gray-600 dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'alerts' ? "'FILL' 1" : "" }}>notifications_active</span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider text-brand-dark dark:text-gray-400">Alerts</span>
+            <span className="text-[9px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-400">Alerts</span>
           </button>
-
           <button
             onClick={() => setCurrentScreen('logs')}
-            className={`flex flex-col items-center gap-1.5 group transition-opacity ${currentScreen === 'logs' ? 'opacity-100' : 'opacity-40'}`}
+            className={`flex flex-col items-center gap-1.5 group transition-opacity duration-200 ${currentScreen === 'logs' ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'} active:animate-button-press`}
           >
-            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'logs' ? 'bg-primary/20 dark:bg-primary/10' : 'bg-transparent'}`}>
-              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'logs' ? 'text-primary' : 'text-brand-dark dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'logs' ? "'FILL' 1" : "" }}>assignment</span>
+            <div className={`w-12 h-12 rounded-button flex items-center justify-center transition-all ${currentScreen === 'logs' ? 'bg-primary/10' : 'bg-transparent'}`}>
+              <span className={`material-symbols-outlined text-2xl ${currentScreen === 'logs' ? 'text-primary' : 'text-gray-600 dark:text-gray-400'}`} style={{ fontVariationSettings: currentScreen === 'logs' ? "'FILL' 1" : "" }}>assignment</span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider text-brand-dark dark:text-gray-400">Ledger</span>
-          </button>
-        </nav>
+            <span className="text-[9px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-400">Ledger</span>
+          </button>        </nav>
       </div>
     </div>
   );

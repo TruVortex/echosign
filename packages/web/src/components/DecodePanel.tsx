@@ -103,16 +103,16 @@ export function DecodePanel() {
       <div className="flex gap-2">
         <button
           onClick={() => setMode('acoustic')}
-          className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
-            mode === 'acoustic' ? 'bg-neutral-700 text-white' : 'bg-neutral-800 text-gray-500'
+          className={`px-4 py-1.5 rounded-button text-sm font-medium transition-colors duration-200 active:animate-button-press ${
+            mode === 'acoustic' ? 'bg-primary text-white' : 'bg-brand-card-dark text-gray-400 hover:text-white'
           }`}
         >
           Acoustic
         </button>
         <button
           onClick={() => setMode('hex')}
-          className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
-            mode === 'hex' ? 'bg-neutral-700 text-white' : 'bg-neutral-800 text-gray-500'
+          className={`px-4 py-1.5 rounded-button text-sm font-medium transition-colors duration-200 active:animate-button-press ${
+            mode === 'hex' ? 'bg-primary text-white' : 'bg-brand-card-dark text-gray-400 hover:text-white'
           }`}
         >
           Paste Hex
@@ -125,20 +125,20 @@ export function DecodePanel() {
             {!listener.isListening ? (
               <button
                 onClick={listener.startListening}
-                className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500"
+                className="px-6 py-2 bg-success text-white font-bold rounded-button hover:bg-success-dark active:animate-button-press"
               >
                 Start Listening
               </button>
             ) : (
               <button
                 onClick={handleStop}
-                className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500"
+                className="px-6 py-2 bg-transmit text-white font-bold rounded-button hover:bg-transmit-dark active:animate-button-press"
               >
                 Stop & Decode
               </button>
             )}
             {listener.isListening && (
-              <span className="text-sm text-green-400 animate-pulse">Listening for FSK signal...</span>
+              <span className="text-sm text-success animate-pulse">Listening for FSK signal...</span>
             )}
           </div>
 
@@ -158,12 +158,12 @@ export function DecodePanel() {
                 <StatusBadge status={verifyStatus} />
               </div>
               {decoded && decoded.crcValid === false && (
-                <div className="text-xs text-yellow-400">
+                <div className="text-xs text-warning">
                   CRC mismatch — some fields may be approximate due to acoustic noise
                 </div>
               )}
               {decoded && decoded.crcValid === true && (
-                <div className="text-xs text-green-400">
+                <div className="text-xs text-success">
                   CRC verified — perfect acoustic decode
                 </div>
               )}
@@ -184,20 +184,20 @@ export function DecodePanel() {
             value={hexInput}
             onChange={(e) => setHexInput(e.target.value)}
             placeholder="Paste 48-character hex string..."
-            className="w-full h-16 bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm font-mono resize-none focus:outline-none focus:border-amber-500"
+            className="w-full h-16 bg-brand-card-dark border border-brand-border rounded-input p-3 text-sm font-mono resize-none focus:outline-none focus:border-primary"
           />
           <button
             onClick={handleHexDecode}
             disabled={!!loading || !hexInput.trim()}
-            className="px-6 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-primary text-white font-bold rounded-button hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed active:animate-button-press"
           >
             {loading || 'Decode Hex'}
           </button>
         </div>
       )}
 
-      {loading && <div className="text-yellow-400 text-sm">{loading}</div>}
-      {error && <div className="text-red-400 text-sm">{error}</div>}
+      {loading && <div className="text-warning text-sm">{loading}</div>}
+      {error && <div className="text-error text-sm">{error}</div>}
 
       {decoded && (
         <>
@@ -207,12 +207,12 @@ export function DecodePanel() {
           <button
             onClick={handleAuditSync}
             disabled={auditLoading}
-            className="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 disabled:opacity-50"
+            className="px-6 py-2 bg-primary text-white font-bold rounded-button hover:bg-primary-dark disabled:opacity-50 active:animate-button-press"
           >
             {auditLoading ? 'Syncing to Solana...' : 'Sync to Blockchain'}
           </button>
 
-          {auditError && <div className="text-red-400 text-sm">{auditError}</div>}
+          {auditError && <div className="text-error text-sm">{auditError}</div>}
 
           {auditUrl && (
             <div className="text-sm">
@@ -221,7 +221,7 @@ export function DecodePanel() {
                 href={auditUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-purple-400 underline break-all"
+                className="text-primary underline break-all"
               >
                 {auditUrl}
               </a>

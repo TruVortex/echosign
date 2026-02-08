@@ -17,9 +17,11 @@ function toHexString(bytes: Uint8Array): string {
 const AlertScreen: React.FC<AlertScreenProps> = ({ isDarkMode, onToggleTheme, incidents, onIncidentUpdate }) => {
     const [isAcknowledging, setIsAcknowledging] = useState(false);
     const [isDecoding, setIsDecoding] = useState(false);
+    const [isDecodingHex, setIsDecodingHex] = useState(false);
     const [decodeStatus, setDecodeStatus] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const { startListening, stopAndDecode, isListening } = useAcousticListen();
+    const [hexInput, setHexInput] = useState('');
 
     // Show the most recent incident
     const latestIncident = incidents.length > 0 ? incidents[0] : null;
@@ -36,6 +38,49 @@ const AlertScreen: React.FC<AlertScreenProps> = ({ isDarkMode, onToggleTheme, in
             setError(err instanceof Error ? err.message : 'Failed to acknowledge');
         } finally {
             setIsAcknowledging(false);
+        }
+    };
+
+    const handleDecodeHex = async () => {
+        const cleanedHex = hexInput.replace(/\s/g, '').toLowerCase();
+        if (cleanedHex.length !== 48 || !/^[0-9a-f]+$/.test(cleanedHex)) {
+            setError('Invalid hex string. Must be 48 hexadecimal characters.');
+            return;
+        }
+
+        setIsDecodingHex(true);
+        setDecodeStatus('Decoding hex to text...');
+        setError(null);
+
+        try {
+            const result = await decodeHex(cleanedHex, null, false); // Assume exact match for manual input
+            setDecodeStatus('Creating incident from decoded data...');
+
+            // Classify the decoded text
+            const classification = await classifyIncident(result.text);
+
+            const incident: Incident = {
+                id: cleanedHex, // Use hex as ID
+                type: classification.type,
+                code: classification.code,
+                priority: classification.priority,
+                match: classification.confidence,
+                timestamp: new Date().toLocaleTimeString() + ' UTC',
+                signer: 'MANUAL', // Indicate manual input
+                status: 'pending',
+                description: result.text,
+                hexCode: cleanedHex,
+            };
+
+            const created = await createIncident(incident);
+            onIncidentUpdate(created);
+            setDecodeStatus(`Decoded: "${result.text.slice(0, 60)}..."`);
+        } catch (err) {
+            console.error('Hex decode failed:', err);
+            setError(err instanceof Error ? err.message : 'Hex decode failed');
+            setDecodeStatus(null);
+        } finally {
+            setIsDecodingHex(false);
         }
     };
 
@@ -206,6 +251,30 @@ const AlertScreen: React.FC<AlertScreenProps> = ({ isDarkMode, onToggleTheme, in
                                 <p className="text-gray-400 dark:text-gray-600 text-sm">No incidents reported yet. Use Report tab or decode an acoustic signal.</p>
                             </div>
                         )}
+                    </div>
+                </section>
+
+                {/* Manual Hex Input Section */}
+                <section className="space-y-3">
+                    <h3 className="text-primary tactical-font text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px] font-bold">keyboard</span> Manual Hex Input
+                    </h3>
+                    <div className="rounded-functional bg-white dark:bg-brand-card-dark border border-gray-200 dark:border-brand-border overflow-hidden transition-colors">
+                        <div className="p-5">
+                            <textarea
+                                value={hexInput}
+                                onChange={(e) => setHexInput(e.target.value)}
+                                placeholder="Enter 48-character hex code (e.g., 010203...)"
+                                className="w-full h-24 bg-brand-card-dark border border-brand-border rounded-input p-3 text-sm font-mono resize-none focus:outline-none focus:border-primary mb-4"
+                            />
+                            <button
+                                onClick={handleDecodeHex}
+                                disabled={isDecodingHex || !hexInput.trim()}
+                                className="w-full flex items-center justify-center rounded-functional h-14 gap-3 tactical-font font-bold text-lg tracking-widest shadow-lg hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-primary text-white"
+                            >
+                                {isDecodingHex ? 'DECODING HEX...' : 'DECODE HEX'}
+                            </button>
+                        </div>
                     </div>
                 </section>
 
