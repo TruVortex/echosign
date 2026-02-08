@@ -43,12 +43,23 @@ const App: React.FC = () => {
     setLogs(prev => [incident, ...prev]);
   };
 
+  const handleIncidentUpdate = (updated: Incident) => {
+    setLogs(prev => {
+      const exists = prev.some(l => l.id === updated.id);
+      if (exists) {
+        return prev.map(l => l.id === updated.id ? updated : l);
+      }
+      // New incident from decode
+      return [updated, ...prev];
+    });
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'report':
         return <ReportScreen onIncidentCapture={addIncidentToLog} isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />;
       case 'alerts':
-        return <AlertScreen isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />;
+        return <AlertScreen isDarkMode={isDarkMode} onToggleTheme={toggleTheme} incidents={logs} onIncidentUpdate={handleIncidentUpdate} />;
       case 'logs':
         return <LogScreen logs={logs} setLogs={setLogs} isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />;
       default:

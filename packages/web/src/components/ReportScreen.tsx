@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Incident } from '../types';
-import { transcribeAudio, classifyIncident, createIncident } from '../services/incidents';
+import { transcribeAudio, classifyIncident, createIncident, encodeText } from '../services/incidents';
 import { useRecording } from '../hooks/useRecording';
 
 interface ReportScreenProps {
@@ -45,17 +45,31 @@ const ReportScreen: React.FC<ReportScreenProps> = ({ onIncidentCapture, isDarkMo
             const result = await classifyIncident(transcript);
             setClassification(result);
 
-            // Step 3: Create incident
+            // Step 3: Encode text to get hex, signature, pubkey
+            let hexCode = '', signature = '', pubkey = '';
+            try {
+                const encoded = await encodeText(transcript);
+                hexCode = encoded.hex;
+                signature = encoded.signature;
+                pubkey = encoded.pubkey;
+            } catch (encodeErr) {
+                console.warn('Encode failed, using fallback ID:', encodeErr);
+            }
+
+            // Step 4: Create incident with real encode data
             const incident: Incident = {
-                id: `INC-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                id: hexCode || `INC-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                 type: result.type,
                 code: result.code,
                 priority: result.priority,
                 match: result.confidence,
                 timestamp: new Date().toLocaleTimeString() + ' UTC',
-                signer: '0x' + Math.random().toString(16).substr(2, 8).toUpperCase(),
+                signer: pubkey ? `0x${pubkey.slice(0, 8).toUpperCase()}` : '0x' + Math.random().toString(16).substr(2, 8).toUpperCase(),
                 status: 'pending',
-                description: transcript
+                description: transcript,
+                hexCode,
+                signature,
+                pubkey,
             };
 
             // Save to backend
@@ -87,17 +101,31 @@ const ReportScreen: React.FC<ReportScreenProps> = ({ onIncidentCapture, isDarkMo
             const result = await classifyIncident(textInput);
             setClassification(result);
 
-            // Step 2: Create incident
+            // Step 2: Encode text to get hex, signature, pubkey
+            let hexCode = '', signature = '', pubkey = '';
+            try {
+                const encoded = await encodeText(textInput);
+                hexCode = encoded.hex;
+                signature = encoded.signature;
+                pubkey = encoded.pubkey;
+            } catch (encodeErr) {
+                console.warn('Encode failed, using fallback ID:', encodeErr);
+            }
+
+            // Step 3: Create incident with real encode data
             const incident: Incident = {
-                id: `INC-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                id: hexCode || `INC-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                 type: result.type,
                 code: result.code,
                 priority: result.priority,
                 match: result.confidence,
                 timestamp: new Date().toLocaleTimeString() + ' UTC',
-                signer: '0x' + Math.random().toString(16).substr(2, 8).toUpperCase(),
+                signer: pubkey ? `0x${pubkey.slice(0, 8).toUpperCase()}` : '0x' + Math.random().toString(16).substr(2, 8).toUpperCase(),
                 status: 'pending',
-                description: textInput
+                description: textInput,
+                hexCode,
+                signature,
+                pubkey,
             };
 
             // Save to backend

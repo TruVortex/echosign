@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Incident } from '../types';
-import { updateIncidentStatus } from '../services/incidents';
+import { updateIncidentStatus, updateIncident, auditSubmit } from '../services/incidents';
 
 interface LogScreenProps {
     logs: Incident[];
@@ -12,22 +12,41 @@ interface LogScreenProps {
 const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onToggleTheme }) => {
     const [filter, setFilter] = useState('All');
     const [syncingId, setSyncingId] = useState<string | null>(null);
+    const [syncError, setSyncError] = useState<string | null>(null);
 
     const filteredLogs = filter === 'All'
         ? logs
         : logs.filter(log => log.type.toLowerCase().includes(filter.toLowerCase()));
 
     const handleSync = async (logId: string) => {
+        const log = logs.find(l => l.id === logId);
+        if (!log) return;
+
         try {
             setSyncingId(logId);
-            // Call backend to update status
-            const updated = await updateIncidentStatus(logId, 'synced');
+            setSyncError(null);
+
+            // Submit to Solana via audit endpoint
+            const { results } = await auditSubmit([{
+                code: log.hexCode || log.id,
+                signature: log.signature || '',
+                pubkey: log.pubkey || '',
+                timestamp: Math.floor(Date.now() / 1000),
+                alertType: log.type,
+            }]);
+
+            const explorerUrl = results[0]?.explorerUrl || '';
+
+            // Update incident with explorerUrl and synced status
+            await updateIncident(logId, { status: 'synced', explorerUrl });
+            const updated = { ...log, status: 'synced' as const, explorerUrl };
+
             // Update local state
             const newLogs = logs.map(l => l.id === logId ? updated : l);
             setLogs(newLogs);
         } catch (err) {
             console.error('Failed to sync incident:', err);
-            // Could show error toast here
+            setSyncError(err instanceof Error ? err.message : 'Sync to chain failed');
         } finally {
             setSyncingId(null);
         }
@@ -114,6 +133,18 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
                     </div>
                 </div>
 
+                {syncError && (
+                    <div className="px-4">
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-center gap-3">
+                            <span className="material-symbols-outlined text-red-500">error</span>
+                            <p className="text-sm text-red-700 dark:text-red-300 font-medium flex-1">{syncError}</p>
+                            <button onClick={() => setSyncError(null)} className="text-red-400 hover:text-red-600">
+                                <span className="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="px-4 space-y-5">
                     {filteredLogs.map(log => (
                         <div key={log.id} className="bg-white dark:bg-brand-card-dark rounded-2xl shadow-sm overflow-hidden border border-gray-100 dark:border-white/5 relative transition-colors">
@@ -179,6 +210,20 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
                                             </div>
                                             <span className="material-symbols-outlined text-gray-300 dark:text-zinc-700">lock</span>
                                         </button>
+                                    )}
+                                    {log.status === 'synced' && log.explorerUrl && (
+                                        <a
+                                            href={log.explorerUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full mt-2 py-3 bg-brand-success/10 border border-brand-success/30 text-brand-success rounded-xl flex items-center justify-between px-5 hover:bg-brand-success/20 transition-colors"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <span className="material-symbols-outlined text-lg">open_in_new</span>
+                                                <span className="font-mono text-[11px] font-bold tracking-widest uppercase">View on Solana</span>
+                                            </div>
+                                            <span className="font-mono text-[9px] opacity-60">Explorer</span>
+                                        </a>
                                     )}
                                 </div>
                             </div>

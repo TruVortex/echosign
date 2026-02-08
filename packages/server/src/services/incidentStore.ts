@@ -8,6 +8,10 @@ interface Incident {
     signer: string;
     status: 'pending' | 'verified' | 'synced';
     description: string;
+    hexCode?: string;
+    signature?: string;
+    pubkey?: string;
+    explorerUrl?: string;
 }
 
 // In-memory storage for incidents

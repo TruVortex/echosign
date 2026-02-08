@@ -11,6 +11,10 @@ interface Incident {
     signer: string;
     status: 'pending' | 'verified' | 'synced';
     description: string;
+    hexCode?: string;
+    signature?: string;
+    pubkey?: string;
+    explorerUrl?: string;
 }
 
 
@@ -73,6 +77,21 @@ router.patch('/incidents/:id/status', (req, res) => {
             return;
         }
 
+        res.json({ success: true, incident: updated });
+    } catch (err) {
+        res.status(500).json({ error: String(err) });
+    }
+});
+
+// PATCH /api/incidents/:id - Update incident fields
+router.patch('/incidents/:id', (req, res) => {
+    try {
+        const updates = req.body;
+        const updated = incidentStore.update(req.params.id, updates);
+        if (!updated) {
+            res.status(404).json({ error: 'Incident not found' });
+            return;
+        }
         res.json({ success: true, incident: updated });
     } catch (err) {
         res.status(500).json({ error: String(err) });
