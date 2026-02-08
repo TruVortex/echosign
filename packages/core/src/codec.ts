@@ -144,6 +144,25 @@ export function getAlertName(code: Uint8Array): string {
   return ALERT_NAMES[code[0]] ?? 'Unknown';
 }
 
+/** Retry wrapper for Gemini API calls that handles 429 rate limits */
+async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      if (msg.includes('429') && i < retries - 1) {
+        const wait = 4000 * (i + 1); // 4s, 8s, 12s backoff
+        console.warn(`Rate limited, retrying in ${wait / 1000}s... (${i + 1}/${retries})`);
+        await new Promise(r => setTimeout(r, wait));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
 const ENCODE_SYSTEM_PROMPT = `You are an emergency message encoder for disaster-response communications.
 
 Given an emergency message (up to 200 words), extract structured data and output
@@ -194,10 +213,10 @@ export async function encodeMessage(text: string, apiKey: string): Promise<Seman
     generationConfig: { responseMimeType: 'application/json' },
   });
 
-  const result = await model.generateContent({
+  const result = await withRetry(() => model.generateContent({
     contents: [{ role: 'user', parts: [{ text }] }],
     systemInstruction: { role: 'model', parts: [{ text: ENCODE_SYSTEM_PROMPT }] },
-  });
+  }));
 
   let responseText = result.response.text().trim();
   // Strip markdown fences if present
@@ -233,10 +252,10 @@ export async function decodeMessage(
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-  const result = await model.generateContent({
+  const result = await withRetry(() => model.generateContent({
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(fields) }] }],
     systemInstruction: { role: 'model', parts: [{ text: DECODE_SYSTEM_PROMPT }] },
-  });
+  }));
 
   const text = result.response.text().trim();
   return { text, fields, verified };

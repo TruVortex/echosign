@@ -6,4 +6,5 @@ echosign-keypair.json
 sa-key.json
 .DS_Store
 *.tsbuildinfo
+null
 

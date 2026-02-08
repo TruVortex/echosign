@@ -2,6 +2,20 @@ import { Router } from 'express';
 
 const router = Router();
 
+async function fetchWithRetry(url: string, options: RequestInit, retries = 3): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url, options);
+    if (res.status === 429 && i < retries - 1) {
+      const wait = 4000 * (i + 1);
+      console.warn(`TTS rate limited, retrying in ${wait / 1000}s... (${i + 1}/${retries})`);
+      await new Promise(r => setTimeout(r, wait));
+      continue;
+    }
+    return res;
+  }
+  return fetch(url, options); // final attempt
+}
+
 router.post('/tts', async (req, res) => {
   try {
     const { text } = req.body;
@@ -16,9 +30,9 @@ router.post('/tts', async (req, res) => {
       return;
     }
 
-    // Use Gemini's TTS endpoint via REST API
-    const ttsRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    // Use the dedicated Gemini 2.5 Flash TTS model (separate quota from text model)
+    const ttsRes = await fetchWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,7 +54,6 @@ router.post('/tts', async (req, res) => {
     );
 
     if (!ttsRes.ok) {
-      // Fallback: TTS is optional, return a simple error
       res.status(500).json({ error: 'TTS generation failed' });
       return;
     }
@@ -59,7 +72,6 @@ router.post('/tts', async (req, res) => {
 
     const audioBuffer = Buffer.from(audioPart.inlineData.data, 'base64');
     const mimeType = audioPart.inlineData.mimeType;
-    const format = mimeType.split('/')[1] || 'wav';
 
     res.set('Content-Type', mimeType);
     res.send(audioBuffer);

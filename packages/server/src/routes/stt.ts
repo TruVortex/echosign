@@ -5,6 +5,24 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
+async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      if (msg.includes('429') && i < retries - 1) {
+        const wait = 4000 * (i + 1);
+        console.warn(`Rate limited, retrying in ${wait / 1000}s... (${i + 1}/${retries})`);
+        await new Promise(r => setTimeout(r, wait));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
 router.post('/stt', upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
@@ -26,7 +44,7 @@ router.post('/stt', upload.single('audio'), async (req, res) => {
     // Determine MIME type from the uploaded file
     const mimeType = req.file.mimetype || 'audio/webm';
 
-    const result = await model.generateContent({
+    const result = await withRetry(() => model.generateContent({
       contents: [{
         role: 'user',
         parts: [
@@ -41,7 +59,7 @@ router.post('/stt', upload.single('audio'), async (req, res) => {
           },
         ],
       }],
-    });
+    }));
 
     const transcript = result.response.text().trim();
     res.json({

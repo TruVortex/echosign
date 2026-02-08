@@ -7,8 +7,13 @@ interface Props {
 
 export const VoiceCaptureSection = ({ mode }: Props): JSX.Element => {
     return (
-        <div className="flex-1 flex flex-col p-4 bg-neutral-950 overflow-y-auto">
-            {mode === 'encode' ? <EncodePanel /> : <DecodePanel />}
+        <div className="flex-1 flex flex-col bg-neutral-950 overflow-y-auto">
+            <div className={`flex-1 p-4 ${mode === 'encode' ? '' : 'hidden'}`}>
+                <EncodePanel />
+            </div>
+            <div className={`flex-1 p-4 ${mode === 'decode' ? '' : 'hidden'}`}>
+                <DecodePanel />
+            </div>
         </div>
     );
 };
