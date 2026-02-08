@@ -189,14 +189,20 @@ Rules:
  */
 export async function encodeMessage(text: string, apiKey: string): Promise<SemanticCode> {
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    generationConfig: { responseMimeType: 'application/json' },
+  });
 
   const result = await model.generateContent({
     contents: [{ role: 'user', parts: [{ text }] }],
     systemInstruction: { role: 'model', parts: [{ text: ENCODE_SYSTEM_PROMPT }] },
   });
 
-  const responseText = result.response.text().trim();
+  let responseText = result.response.text().trim();
+  // Strip markdown fences if present
+  const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (jsonMatch) responseText = jsonMatch[1].trim();
   const fields: SemanticFields = JSON.parse(responseText);
 
   // Clamp msg to 8 chars
@@ -225,7 +231,7 @@ export async function decodeMessage(
   const fields = unpackFields(code);
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const result = await model.generateContent({
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(fields) }] }],

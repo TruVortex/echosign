@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm build:*)",
+      "Bash(echo \"\n=== STEP 1: ENCODE with Gemini ===\n\")",
+      "Bash(curl:*)"
+    ]
+  }
+}

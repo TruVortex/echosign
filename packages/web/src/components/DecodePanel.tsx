@@ -15,7 +15,7 @@ export function DecodePanel() {
   const [error, setError] = useState('');
 
   const handleStop = async () => {
-    const result = listener.stopAndDecode(120); // 120 bytes = full wire frame
+    const result = listener.stopAndDecode(24); // 24 bytes = semantic code only
     if (!result) return;
 
     setLoading('Decoding...');
@@ -52,14 +52,14 @@ export function DecodePanel() {
         {!listener.isListening ? (
           <button
             onClick={listener.startListening}
-            className="px-6 py-2 bg-emergency-green text-white font-bold rounded-lg hover:bg-green-500"
+            className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500"
           >
             Start Listening
           </button>
         ) : (
           <button
             onClick={handleStop}
-            className="px-6 py-2 bg-emergency-red text-white font-bold rounded-lg hover:bg-red-500"
+            className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500"
           >
             Stop & Decode
           </button>

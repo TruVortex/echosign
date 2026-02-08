@@ -8,7 +8,7 @@ import encodeRouter from './routes/encode.js';
 import decodeRouter from './routes/decode.js';
 import sttRouter from './routes/stt.js';
 import ttsRouter from './routes/tts.js';
-import auditRouter from './routes/audit.js';
+// import auditRouter from './routes/audit.js'; // Solana — skipped for now
 
 // Load .env from project root (two directories up from this file)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,7 +25,7 @@ app.use('/api', encodeRouter);
 app.use('/api', decodeRouter);
 app.use('/api', sttRouter);
 app.use('/api', ttsRouter);
-app.use('/api', auditRouter);
+// app.use('/api', auditRouter); // Solana — skipped for now
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });

@@ -72,7 +72,7 @@ export function EncodePanel() {
           value={transcript || textInput}
           onChange={(e) => { setTextInput(e.target.value); setTranscript(''); }}
           placeholder="Or type your emergency message here..."
-          className="w-full h-24 bg-dark-800 border border-dark-700 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-emergency-amber"
+          className="w-full h-24 bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-amber-500"
         />
       </div>
 
@@ -80,7 +80,7 @@ export function EncodePanel() {
       <button
         onClick={handleEncode}
         disabled={!!loading || (!transcript && !textInput)}
-        className="px-6 py-2 bg-emergency-amber text-black font-bold rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-6 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading || 'Encode Message'}
       </button>
@@ -92,13 +92,13 @@ export function EncodePanel() {
         <div className="space-y-4">
           <div>
             <div className="text-sm text-gray-400 mb-1">Semantic Code (24 bytes):</div>
-            <div className="font-mono text-cyan-400 bg-dark-800 p-3 rounded-lg break-all">
+            <div className="font-mono text-cyan-400 bg-neutral-800 p-3 rounded-lg break-all">
               {encoded.hex}
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-400 mb-1">Fields:</div>
-            <pre className="text-xs text-gray-300 bg-dark-800 p-3 rounded-lg overflow-auto">
+            <pre className="text-xs text-gray-300 bg-neutral-800 p-3 rounded-lg overflow-auto">
               {JSON.stringify(encoded.fields, null, 2)}
             </pre>
           </div>
@@ -107,15 +107,15 @@ export function EncodePanel() {
           <button
             onClick={handleTransmit}
             disabled={acoustic.isPlaying}
-            className="px-6 py-2 bg-emergency-red text-white font-bold rounded-lg hover:bg-red-500 disabled:opacity-50"
+            className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 disabled:opacity-50"
           >
             {acoustic.isPlaying ? `Transmitting... ${Math.round(acoustic.progress * 100)}%` : 'Sign & Transmit'}
           </button>
 
           {acoustic.isPlaying && (
-            <div className="w-full bg-dark-700 rounded-full h-2">
+            <div className="w-full bg-neutral-700 rounded-full h-2">
               <div
-                className="bg-emergency-red h-2 rounded-full transition-all"
+                className="bg-red-600 h-2 rounded-full transition-all"
                 style={{ width: `${acoustic.progress * 100}%` }}
               />
             </div>

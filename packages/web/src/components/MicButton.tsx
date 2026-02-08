@@ -13,8 +13,8 @@ export function MicButton({ isRecording, onClick }: Props) {
         w-16 h-16 rounded-full flex items-center justify-center text-2xl
         transition-all duration-200
         ${isRecording
-          ? 'bg-emergency-red animate-pulse-ring'
-          : 'bg-dark-700 hover:bg-dark-800 border border-gray-600'
+          ? 'bg-red-600 animate-pulse'
+          : 'bg-neutral-700 hover:bg-neutral-800 border border-gray-600'
         }
       `}
       aria-label={isRecording ? 'Stop recording' : 'Start recording'}

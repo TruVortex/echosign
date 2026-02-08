@@ -83,6 +83,9 @@ importers:
       '@echosign/speech':
         specifier: workspace:*
         version: link:../speech
+      '@google/generative-ai':
+        specifier: ^0.21.0
+        version: 0.21.0
       '@solana/web3.js':
         specifier: ^1.95
         version: 1.98.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)

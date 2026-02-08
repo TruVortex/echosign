@@ -2,14 +2,14 @@ import { useState, useRef, useCallback } from 'react';
 
 // Inline the FSK logic to avoid bundling Node-only code
 const NIBBLE_FREQS = [1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000];
-const TONE_DURATION = 0.060;
-const TONE_STEP = 0.070;
+const TONE_DURATION = 0.100; // 100ms — longer tones for reliable speaker-to-mic detection
+const TONE_STEP = 0.120;    // 120ms step (100ms tone + 20ms gap)
 const PREAMBLE_LOW = 500;
 const PREAMBLE_HIGH = 4500;
-const PREAMBLE_TONE_DURATION = 0.080;
-const PREAMBLE_CYCLES = 3;
+const PREAMBLE_TONE_DURATION = 0.120;
+const PREAMBLE_CYCLES = 4;  // extra preamble cycle for robust sync
 const POSTAMBLE_FREQ = 4500;
-const POSTAMBLE_DURATION = 0.200;
+const POSTAMBLE_DURATION = 0.300;
 const RAMP_TIME = 0.005;
 
 function buildTones(data: Uint8Array) {

@@ -85,7 +85,7 @@ export function Spectrogram({ analyser, isActive }: Props) {
       ref={canvasRef}
       width={600}
       height={200}
-      className="w-full rounded-lg border border-dark-700 bg-dark-900"
+      className="w-full rounded-lg border border-neutral-700 bg-neutral-900"
     />
   );
 }

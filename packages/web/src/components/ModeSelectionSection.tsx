@@ -1,12 +1,13 @@
-import { useState } from 'react';
+interface Props {
+    mode: 'encode' | 'decode';
+    onModeChange: (mode: 'encode' | 'decode') => void;
+}
 
-export const ModeSelectionSection = (): JSX.Element => {
-    const [mode, setMode] = useState<'encode' | 'decode' | 'audit'>('encode');
-
+export const ModeSelectionSection = ({ mode, onModeChange }: Props): JSX.Element => {
     return (
         <div className="flex gap-2 p-4 bg-neutral-900">
             <button
-                onClick={() => setMode('encode')}
+                onClick={() => onModeChange('encode')}
                 className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-colors ${mode === 'encode'
                         ? 'bg-red-600 text-white'
                         : 'bg-neutral-800 text-gray-400 hover:bg-neutral-700'
@@ -15,7 +16,7 @@ export const ModeSelectionSection = (): JSX.Element => {
                 Encode
             </button>
             <button
-                onClick={() => setMode('decode')}
+                onClick={() => onModeChange('decode')}
                 className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-colors ${mode === 'decode'
                         ? 'bg-amber-500 text-white'
                         : 'bg-neutral-800 text-gray-400 hover:bg-neutral-700'
@@ -23,16 +24,6 @@ export const ModeSelectionSection = (): JSX.Element => {
             >
                 Decode
             </button>
-            <button
-                onClick={() => setMode('audit')}
-                className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-colors ${mode === 'audit'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-neutral-800 text-gray-400 hover:bg-neutral-700'
-                    }`}
-            >
-                Audit
-            </button>
         </div>
     );
 };
-

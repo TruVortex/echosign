@@ -6,9 +6,9 @@ interface Props {
 }
 
 function severityColor(severity: number): string {
-  if (severity >= 7) return 'border-emergency-red bg-red-950';
-  if (severity >= 4) return 'border-emergency-amber bg-yellow-950';
-  return 'border-emergency-green bg-green-950';
+  if (severity >= 7) return 'border-red-600 bg-red-950';
+  if (severity >= 4) return 'border-amber-500 bg-yellow-950';
+  return 'border-green-600 bg-green-950';
 }
 
 export function AlertDisplay({ text, severity = 5 }: Props) {

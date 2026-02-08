@@ -12,6 +12,7 @@
     "@echosign/core": "workspace:*",
     "@echosign/solana": "workspace:*",
     "@echosign/speech": "workspace:*",
+    "@google/generative-ai": "^0.21.0",
     "@solana/web3.js": "^1.95",
     "bs58": "^6",
     "cors": "^2.8",
