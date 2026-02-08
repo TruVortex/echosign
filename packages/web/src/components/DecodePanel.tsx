@@ -9,21 +9,25 @@ import { api } from '../api/client.js';
 export function DecodePanel() {
   const listener = useAcousticListen();
   const player = useAudioPlayer();
-  const [decoded, setDecoded] = useState<{ text: string; severity: number } | null>(null);
+  const [decoded, setDecoded] = useState<{ text: string; severity: number; crcValid?: boolean } | null>(null);
   const [verifyStatus, setVerifyStatus] = useState<'verified' | 'unverified' | 'failed' | null>(null);
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
   const [hexInput, setHexInput] = useState('');
   const [mode, setMode] = useState<'acoustic' | 'hex'>('acoustic');
 
-  const decodeHex = async (hex: string) => {
+  const decodeHex = async (hex: string, skipCrc = false) => {
     setLoading('Decoding...');
     setError('');
     setDecoded(null);
     try {
-      const decResult = await api.decode(hex);
-      setDecoded({ text: decResult.text, severity: decResult.fields.severity });
-      setVerifyStatus('verified');
+      const decResult = await api.decode(hex, undefined, skipCrc);
+      setDecoded({
+        text: decResult.text,
+        severity: decResult.fields.severity,
+        crcValid: decResult.crcValid,
+      });
+      setVerifyStatus(decResult.crcValid ? 'verified' : 'unverified');
       try {
         const audio = await api.tts(decResult.text);
         await player.play(audio);
@@ -41,28 +45,14 @@ export function DecodePanel() {
     const result = listener.stopAndDecode(24);
     if (!result) return;
 
-    setLoading('Decoding...');
-    setError('');
-    setVerifyStatus(result.confidence > 0.8 ? 'unverified' : 'failed');
+    setVerifyStatus(null);
 
-    try {
-      const codeHex = Array.from(result.data.slice(0, 24))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+    const codeHex = Array.from(result.data.slice(0, 24))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
 
-      const decResult = await api.decode(codeHex);
-      setDecoded({ text: decResult.text, severity: decResult.fields.severity });
-
-      try {
-        const audio = await api.tts(decResult.text);
-        await player.play(audio);
-      } catch {
-        // TTS is optional
-      }
-    } catch (err) {
-      setError(String(err));
-    }
-    setLoading('');
+    // Acoustic decode: skip CRC since a few nibble errors are expected
+    await decodeHex(codeHex, true);
   };
 
   const handleHexDecode = () => {
@@ -71,7 +61,8 @@ export function DecodePanel() {
       setError('Invalid hex string');
       return;
     }
-    decodeHex(cleaned);
+    // Hex paste: enforce CRC (data should be exact)
+    decodeHex(cleaned, false);
   };
 
   return (
@@ -136,9 +127,19 @@ export function DecodePanel() {
                 </span>
                 <StatusBadge status={verifyStatus} />
               </div>
+              {decoded && decoded.crcValid === false && (
+                <div className="text-xs text-yellow-400">
+                  CRC mismatch — some fields may be approximate due to acoustic noise
+                </div>
+              )}
+              {decoded && decoded.crcValid === true && (
+                <div className="text-xs text-green-400">
+                  CRC verified — perfect acoustic decode
+                </div>
+              )}
               {listener.result.errorPositions.length > 0 && (
-                <div className="text-xs text-red-400">
-                  Errors at byte positions: {listener.result.errorPositions.join(', ')}
+                <div className="text-xs text-gray-500">
+                  Low-confidence bytes: {listener.result.errorPositions.join(', ')}
                 </div>
               )}
             </div>

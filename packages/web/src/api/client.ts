@@ -48,6 +48,7 @@ export interface DecodeResult {
     pop: number;
     msg: string;
   };
+  crcValid?: boolean;
 }
 
 export interface STTResult {
@@ -57,7 +58,7 @@ export interface STTResult {
 
 export const api = {
   encode: (text: string) => post<EncodeResult>('/encode', { text }),
-  decode: (hex: string, verified?: boolean) => post<DecodeResult>('/decode', { hex, verified }),
+  decode: (hex: string, verified?: boolean, skipCrc?: boolean) => post<DecodeResult>('/decode', { hex, verified, skipCrc }),
   stt: (audioBlob: Blob) => {
     const fd = new FormData();
     fd.append('audio', audioBlob, 'recording.webm');

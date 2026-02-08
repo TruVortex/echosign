@@ -144,6 +144,10 @@ export function getAlertName(code: Uint8Array): string {
   return ALERT_NAMES[code[0]] ?? 'Unknown';
 }
 
+/* eslint-disable no-console */
+declare const console: { warn(...args: unknown[]): void };
+declare function setTimeout(fn: () => void, ms: number): unknown;
+
 /** Retry wrapper for Gemini API calls that handles 429 rate limits */
 async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
   for (let i = 0; i < retries; i++) {
@@ -154,7 +158,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
       if (msg.includes('429') && i < retries - 1) {
         const wait = 4000 * (i + 1); // 4s, 8s, 12s backoff
         console.warn(`Rate limited, retrying in ${wait / 1000}s... (${i + 1}/${retries})`);
-        await new Promise(r => setTimeout(r, wait));
+        await new Promise(r => setTimeout(r as () => void, wait));
         continue;
       }
       throw error;
@@ -240,10 +244,12 @@ export async function decodeMessage(
   codeInput: Uint8Array | string,
   apiKey: string,
   verified: boolean | null = null,
-): Promise<DecodedAlert> {
+  skipCrc = false,
+): Promise<DecodedAlert & { crcValid: boolean }> {
   const code = typeof codeInput === 'string' ? hexToBytes(codeInput) : codeInput;
 
-  if (!verifyChecksum(code)) {
+  const crcValid = verifyChecksum(code);
+  if (!crcValid && !skipCrc) {
     throw new Error('CRC-16 checksum mismatch — data may be corrupted');
   }
 
@@ -258,5 +264,5 @@ export async function decodeMessage(
   }));
 
   const text = result.response.text().trim();
-  return { text, fields, verified };
+  return { text, fields, verified, crcValid };
 }

@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/decode', async (req, res) => {
   try {
-    const { hex, verified } = req.body;
+    const { hex, verified, skipCrc } = req.body;
     if (!hex || typeof hex !== 'string') {
       res.status(400).json({ error: 'Missing "hex" field' });
       return;
@@ -17,10 +17,11 @@ router.post('/decode', async (req, res) => {
       return;
     }
 
-    const result = await decodeMessage(hex, apiKey, verified ?? null);
+    const result = await decodeMessage(hex, apiKey, verified ?? null, !!skipCrc);
     res.json({
       text: result.text,
       fields: result.fields,
+      crcValid: result.crcValid,
     });
   } catch (err) {
     res.status(500).json({ error: String(err) });
