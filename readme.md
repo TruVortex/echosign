@@ -1,4 +1,4 @@
-# EchoSign
+# [EchoSign](https://devpost.com/software/echosign-zn3wih)
 
 Offline-capable emergency communication protocol for disaster relief. Compresses emergency messages into 24-byte semantic codes using AI, transmits them over audio (FSK), and reconstructs them on the receiving end.
 
