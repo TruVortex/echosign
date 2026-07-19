@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Incident } from '../types';
+import { Incident, Screen } from '../types';
 import { updateIncidentStatus, decodeHex, createIncident, classifyIncident } from '../services/incidents';
 import { useAcousticListen } from '../hooks/useAcousticListen';
 
@@ -8,7 +8,7 @@ interface AlertScreenProps {
     onToggleTheme: () => void;
     incidents: Incident[];
     onIncidentUpdate: (updated: Incident) => void;
-    setCurrentScreen: (screen: string) => void;
+    setCurrentScreen: (screen: Screen) => void;
 }
 
 function toHexString(bytes: Uint8Array): string {
@@ -297,7 +297,7 @@ const AlertScreen: React.FC<AlertScreenProps> = ({ isDarkMode, onToggleTheme, in
                             )}
                             <span className={`relative inline-flex rounded-full h-3 w-3 ${pendingCount > 0 ? 'bg-primary' : 'bg-gray-400'}`}></span>
                         </span>
-                    </button>
+                    </div>
                 </div>
             </header>
 
