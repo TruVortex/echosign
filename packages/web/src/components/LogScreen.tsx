@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Incident } from '../types';
+import { Incident, Screen } from '../types';
 import { updateIncidentStatus, updateIncident, auditSubmit } from '../services/incidents';
 
 interface LogScreenProps {
@@ -7,7 +7,7 @@ interface LogScreenProps {
     setLogs: (logs: Incident[]) => void;
     isDarkMode: boolean;
     onToggleTheme: () => void;
-    setCurrentScreen: (screen: string) => void;
+    setCurrentScreen: (screen: Screen) => void;
 }
 
 const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onToggleTheme, setCurrentScreen }) => {
