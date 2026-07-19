@@ -1,5 +1,5 @@
 {
-  "name": "@echosign/speech",
+  "name": "@cyren/speech",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",

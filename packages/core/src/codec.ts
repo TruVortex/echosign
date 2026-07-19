@@ -1,3 +1,15 @@
+/**
+ * Cyren Semantic Codec
+ *
+ * Packs emergency messages into a 24-byte binary format:
+ *   [type:1][severity:1][lat:3][lon:3][pop:1][msg:8][crc16:2][reserved:5]
+ *
+ * Encoding uses Gemini to extract structured fields from free-text input.
+ * Decoding reverses the binary → fields, then Gemini reconstructs a
+ * human-readable alert for first responders.
+ *
+ * CRC-16/CCITT-FALSE protects bytes 0–16 against corruption.
+ */
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { SemanticFields, SemanticCode, DecodedAlert } from './types.js';
 import { AlertType } from './types.js';
@@ -99,7 +111,7 @@ export function packFields(fields: SemanticFields): Uint8Array {
 export function unpackFields(code: Uint8Array): SemanticFields {
   const typeVal = code[0];
   const type = REVERSE_TYPE_MAP[typeVal] ?? 'SO';
-  const severity = code[1];
+  const severity = Math.min(9, Math.max(1, code[1]));
 
   const latInt = (code[2] << 16) | (code[3] << 8) | code[4];
   const lat = (latInt - 900000) / 10000;
@@ -228,6 +240,8 @@ export async function encodeMessage(text: string, apiKey: string): Promise<Seman
   if (jsonMatch) responseText = jsonMatch[1].trim();
   const fields: SemanticFields = JSON.parse(responseText);
 
+  // Clamp severity to 1-9 (Gemini sometimes returns values > 9)
+  fields.severity = Math.min(9, Math.max(1, Math.round(fields.severity)));
   // Clamp msg to 8 chars
   fields.msg = fields.msg.slice(0, 8);
 

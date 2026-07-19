@@ -10,8 +10,8 @@ import { demoCmd } from './commands/demo.js';
 dotenv.config();
 
 const program = new Command()
-  .name('echosign')
-  .description('EchoSign — Emergency Semantic Codec CLI')
+  .name('cyren')
+  .description('Cyren — Emergency Semantic Codec CLI')
   .version('0.1.0');
 
 program.addCommand(encodeCmd);

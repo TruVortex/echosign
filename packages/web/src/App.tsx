@@ -5,7 +5,7 @@ import AlertScreen from './components/AlertScreen';
 import LogScreen from './components/LogScreen';
 import { getAllIncidents } from './services/incidents';
 
-const STORAGE_KEY = 'echosign_incidents';
+const STORAGE_KEY = 'cyren_incidents';
 
 function loadFromStorage(): Incident[] {
   try {

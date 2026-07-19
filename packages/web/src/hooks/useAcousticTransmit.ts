@@ -1,3 +1,13 @@
+/**
+ * Acoustic FSK Transmitter (Web Audio API)
+ *
+ * Encodes a byte array as a sequence of sine tones using 16-frequency FSK
+ * (1000–4000 Hz, 200 Hz spacing). Each nibble maps to one frequency.
+ * Tones are 100ms with 5ms cosine ramps to eliminate click artifacts.
+ *
+ * A 4-cycle low/high preamble (500/4500 Hz) synchronizes the receiver,
+ * and a 300ms postamble marks end-of-transmission.
+ */
 import { useState, useRef, useCallback } from 'react';
 
 // Inline the FSK logic to avoid bundling Node-only code

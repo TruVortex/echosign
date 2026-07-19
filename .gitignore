@@ -1,10 +1,11 @@
 node_modules/
 dist/
 .env
+*.env.local
 *.pcm
-echosign-keypair.json
+cyren-keypair.json
 sa-key.json
+ngrok.exe
 .DS_Store
 *.tsbuildinfo
-null
 

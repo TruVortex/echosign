@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { encodeMessage, signCode, generateKeypair, bytesToHex } from '@echosign/core';
+import { encodeMessage, signCode, generateKeypair, bytesToHex } from '@cyren/core';
 
 export const encodeCmd = new Command('encode')
   .description('Encode an emergency message into a 24-byte semantic code')

@@ -12,7 +12,7 @@ const API = 'http://localhost:3001';
 
 async function main() {
   console.log('========================================');
-  console.log('  EchoSign Full E2E Pipeline Test');
+  console.log('  Cyren Full E2E Pipeline Test');
   console.log('========================================\n');
 
   // ── STEP 1: Gemini Encode ──

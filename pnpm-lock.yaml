@@ -28,16 +28,16 @@ importers:
 
   packages/cli:
     dependencies:
-      '@echosign/acoustic':
+      '@cyren/acoustic':
         specifier: workspace:*
         version: link:../acoustic
-      '@echosign/core':
+      '@cyren/core':
         specifier: workspace:*
         version: link:../core
-      '@echosign/solana':
+      '@cyren/solana':
         specifier: workspace:*
         version: link:../solana
-      '@echosign/speech':
+      '@cyren/speech':
         specifier: workspace:*
         version: link:../speech
       chalk:
@@ -71,16 +71,16 @@ importers:
 
   packages/server:
     dependencies:
-      '@echosign/acoustic':
+      '@cyren/acoustic':
         specifier: workspace:*
         version: link:../acoustic
-      '@echosign/core':
+      '@cyren/core':
         specifier: workspace:*
         version: link:../core
-      '@echosign/solana':
+      '@cyren/solana':
         specifier: workspace:*
         version: link:../solana
-      '@echosign/speech':
+      '@cyren/speech':
         specifier: workspace:*
         version: link:../speech
       '@google/generative-ai':

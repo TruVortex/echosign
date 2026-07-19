@@ -1,5 +1,5 @@
 {
-  "name": "@echosign/server",
+  "name": "@cyren/server",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,10 +8,10 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@echosign/acoustic": "workspace:*",
-    "@echosign/core": "workspace:*",
-    "@echosign/solana": "workspace:*",
-    "@echosign/speech": "workspace:*",
+    "@cyren/acoustic": "workspace:*",
+    "@cyren/core": "workspace:*",
+    "@cyren/solana": "workspace:*",
+    "@cyren/speech": "workspace:*",
     "@google/generative-ai": "^0.21.0",
     "@solana/web3.js": "^1.95",
     "bs58": "^6",

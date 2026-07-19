@@ -13,7 +13,7 @@ export function getConnection(url?: string): Connection {
 }
 
 export function loadOrCreateKeypair(path?: string): Keypair {
-  const keypairPath = path ?? process.env.SOLANA_KEYPAIR_PATH ?? './echosign-keypair.json';
+  const keypairPath = path ?? process.env.SOLANA_KEYPAIR_PATH ?? './cyren-keypair.json';
 
   try {
     const data = fs.readFileSync(keypairPath, 'utf-8');

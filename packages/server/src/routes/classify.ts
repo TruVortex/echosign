@@ -59,12 +59,11 @@ Provide:
         res.json(classification);
     } catch (err) {
         console.error('Classification error:', err);
-        res.status(500).json({
-            error: String(err),
-            // Fallback classification
+        // Return fallback classification so the frontend can still create an incident
+        res.json({
             type: 'UNCATEGORIZED EVENT',
             code: 'UNKNOWN',
-            priority: '00',
+            priority: 'LOW',
             confidence: 0
         });
     }

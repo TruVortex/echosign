@@ -2,8 +2,8 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { PublicKey } from '@solana/web3.js';
-import { getConnection, loadOrCreateKeypair, ensureFunded, logToChain, queryAuditLog } from '@echosign/solana';
-import type { AuditEntry } from '@echosign/core';
+import { getConnection, loadOrCreateKeypair, ensureFunded, logToChain, queryAuditLog } from '@cyren/solana';
+import type { AuditEntry } from '@cyren/core';
 
 export const auditCmd = new Command('audit')
   .description('Solana audit log operations');

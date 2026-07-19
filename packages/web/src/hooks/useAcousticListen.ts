@@ -1,3 +1,14 @@
+/**
+ * Acoustic FSK Decoder (Web Audio API)
+ *
+ * Listens via the microphone, captures raw PCM, then decodes Cyren's
+ * 16-frequency FSK signal using the Goertzel algorithm — an O(N)
+ * single-bin DFT that's more efficient than FFT when only 16 frequency
+ * bins are needed.
+ *
+ * Pipeline: mic capture → normalize → preamble detection → per-nibble
+ * Goertzel with Hann windowing → byte assembly → confidence scoring.
+ */
 import { useState, useRef, useCallback } from 'react';
 
 // Must match transmitter exactly

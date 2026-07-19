@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "echosign",
+  "name": "cyren",
   "scripts": {
     "build": "pnpm -r run build",
-    "dev:server": "pnpm --filter @echosign/server dev",
-    "dev:web": "pnpm --filter @echosign/web dev",
+    "dev:server": "pnpm --filter @cyren/server dev",
+    "dev:web": "pnpm --filter @cyren/web dev",
     "test": "vitest run",
     "test:watch": "vitest"
   },

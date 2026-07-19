@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { decodeMessage, hexToBytes, verifySignature } from '@echosign/core';
+import { decodeMessage, hexToBytes, verifySignature } from '@cyren/core';
 
 export const decodeCmd = new Command('decode')
   .description('Decode a 24-byte semantic code back into an alert')

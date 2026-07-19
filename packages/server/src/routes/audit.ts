@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { PublicKey } from '@solana/web3.js';
-import type { AuditEntry } from '@echosign/core';
+import type { AuditEntry } from '@cyren/core';
 import {
   getConnection,
   loadOrCreateKeypair,
   ensureFunded,
   batchSubmit,
   queryAuditLog,
-} from '@echosign/solana';
+} from '@cyren/solana';
 
 const router = Router();
 

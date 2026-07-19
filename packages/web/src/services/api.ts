@@ -1,5 +1,7 @@
 // Base API client for backend communication
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Use relative URLs so Vite proxy handles /api routes in dev,
+// and the same paths work in production behind a reverse proxy.
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 class APIError extends Error {
     constructor(public status: number, message: string) {
@@ -9,7 +11,7 @@ class APIError extends Error {
 }
 
 async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${API_URL}${endpoint}`;
+    const url = `${API_BASE}${endpoint}`;
 
     const response = await fetch(url, {
         ...options,
@@ -46,7 +48,7 @@ export const api = {
 
     // Special multipart/form-data upload
     upload: async <T>(endpoint: string, formData: FormData): Promise<T> => {
-        const url = `${API_URL}${endpoint}`;
+        const url = `${API_BASE}${endpoint}`;
         const response = await fetch(url, {
             method: 'POST',
             body: formData,

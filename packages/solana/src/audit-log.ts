@@ -1,3 +1,13 @@
+/**
+ * Solana On-Chain Audit Log
+ *
+ * Writes each emergency alert as a JSON memo transaction on Solana devnet
+ * using the SPL Memo program. This creates an immutable, publicly verifiable
+ * audit trail of all alerts — useful for post-disaster accountability.
+ *
+ * Includes an OfflineAuditQueue that buffers entries in localStorage when
+ * offline and flushes them to the chain when connectivity is restored.
+ */
 import {
   Connection,
   Keypair,
@@ -96,7 +106,7 @@ export async function queryAuditLog(
  */
 export class OfflineAuditQueue {
   private queue: AuditEntry[] = [];
-  private storageKey = 'echosign_audit_queue';
+  private storageKey = 'cyren_audit_queue';
 
   constructor(initialEntries?: AuditEntry[]) {
     if (initialEntries) {

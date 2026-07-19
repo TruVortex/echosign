@@ -1,3 +1,9 @@
+/**
+ * Cyren API Server
+ *
+ * Express backend that proxies Gemini calls for encode/decode/classify,
+ * handles speech-to-text/text-to-speech, and manages an in-memory incident store.
+ */
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -35,6 +41,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });
 });
 
-app.listen(PORT, () => {
-  console.log(`EchoSign server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Cyren server running on http://0.0.0.0:${PORT}`);
 });

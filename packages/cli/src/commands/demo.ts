@@ -10,8 +10,8 @@ import {
   bytesToHex,
   packFields,
   unpackFields,
-} from '@echosign/core';
-import { encodeToTones, tonesToPCM, decodePCM } from '@echosign/acoustic';
+} from '@cyren/core';
+import { encodeToTones, tonesToPCM, decodePCM } from '@cyren/acoustic';
 
 export const demoCmd = new Command('demo')
   .description('Run a full encode → sign → acoustic → decode → verify demo')
@@ -24,7 +24,7 @@ export const demoCmd = new Command('demo')
       process.exit(1);
     }
 
-    console.log(chalk.bold.cyan('\n=== EchoSign Full Demo ===\n'));
+    console.log(chalk.bold.cyan('\n=== Cyren Full Demo ===\n'));
     console.log(chalk.gray(`Input: "${opts.message}"\n`));
 
     // Step 1: Encode

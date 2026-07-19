@@ -1,19 +1,19 @@
 {
-  "name": "@echosign/cli",
+  "name": "@cyren/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "echosign": "./dist/index.js"
+    "cyren": "./dist/index.js"
   },
   "scripts": {
     "build": "tsup",
     "dev": "tsx src/index.ts"
   },
   "dependencies": {
-    "@echosign/acoustic": "workspace:*",
-    "@echosign/core": "workspace:*",
-    "@echosign/solana": "workspace:*",
-    "@echosign/speech": "workspace:*",
+    "@cyren/acoustic": "workspace:*",
+    "@cyren/core": "workspace:*",
+    "@cyren/solana": "workspace:*",
+    "@cyren/speech": "workspace:*",
     "chalk": "^5",
     "commander": "^12",
     "dotenv": "^16.4",

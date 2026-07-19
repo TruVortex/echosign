@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { decodeMessage } from '@echosign/core';
+import { decodeMessage } from '@cyren/core';
 
 const router = Router();
 

@@ -12,12 +12,30 @@ interface LogScreenProps {
 
 const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onToggleTheme, setCurrentScreen }) => {
     const [filter, setFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
     const [syncingId, setSyncingId] = useState<string | null>(null);
     const [syncError, setSyncError] = useState<string | null>(null);
 
-    const filteredLogs = filter === 'All'
-        ? logs
-        : logs.filter(log => log.type.toLowerCase().includes(filter.toLowerCase()));
+    // Derive unique category keywords from actual incident types
+    const categories = ['All', ...Array.from(new Set(
+        logs.map(log => {
+            // Extract first meaningful word from type (e.g., "MEDICAL EMERGENCY" → "Medical")
+            const first = log.type.split(/[\s\-_]+/)[0];
+            return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+        })
+    ))];
+
+    // Filter by category + search query
+    const filteredLogs = logs
+        .filter(log => filter === 'All' || log.type.toLowerCase().includes(filter.toLowerCase()))
+        .filter(log => {
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.toLowerCase();
+            return log.id.toLowerCase().includes(q)
+                || log.type.toLowerCase().includes(q)
+                || log.description.toLowerCase().includes(q)
+                || log.code.toLowerCase().includes(q);
+        });
 
     const handleSync = async (logId: string) => {
         const log = logs.find(l => l.id === logId);
@@ -74,44 +92,34 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
     return (
         <div className="flex flex-col min-h-full">
             <header className="sticky top-0 z-50 bg-white dark:bg-brand-bg-dark border-b border-gray-200 dark:border-white/5 shadow-sm transition-colors">
-                <div className="flex items-center p-4 justify-between h-16 pt-8 pb-8">
-                    <button onClick={() => setCurrentScreen('report')} className="text-primary flex size-10 items-center justify-center hover:bg-brand-dark/10 rounded-functional transition-colors">
-                        <span className="material-symbols-outlined text-[24px]">chevron_left</span>
-                    </button>
-                    <div className="flex flex-col items-center justify-center">
-                    <h2 className="font-black tracking-tighter dark:text-white tactical-font text-lg font-bold leading-none tracking-wider uppercase">Activity Log</h2>
-                    <p className="text-[10px] font-mono text-gray-400 dark:text-white/40 leading-none">NODE_S_ID: 9912-DELTA</p>
+                <div className="flex items-center p-4 justify-between h-16 pt-12 pb-8">
+                    <div className="flex items-center gap-4 pl-2">
+                        <div>
+                            <h1 className="text-sm font-bold tracking-widest uppercase text-brand-dark dark:text-white">Activity Log</h1>
+                            <p className="text-[10px] font-mono text-gray-400 dark:text-white/40 leading-none">{logs.length} incident{logs.length !== 1 ? 's' : ''} recorded</p>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
                     <button
                         onClick={onToggleTheme}
-                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-all
-                                bg-white dark:bg-slate-800 
-                                border border-slate-200 dark:border-slate-700
-                                shadow-sm dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]
-                                hover:bg-slate-100 dark:hover:bg-slate-700/80
-                                z-10"
+                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
                     >
-                        <span 
-                            className={`material-symbols-outlined text-xl transition-all duration-300 ${
-                                isDarkMode 
-                                    ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]' 
-                                    : 'text-slate-600'
-                            }`}
-                        >
-                            {isDarkMode ? 'light_mode' : 'dark_mode'}
-                        </span>
+                        <span className="material-symbols-outlined text-xl text-brand-dark dark:text-white">{isDarkMode ? 'light_mode' : 'dark_mode'}</span>
                     </button>
-                    </div>
                 </div>
                 {/* <div className="bg-gray-50 dark:bg-black/40 px-4 py-2 flex items-center justify-between border-t border-gray-100 dark:border-white/5">
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm text-primary">sensors</span>
-                        <span className="text-[10px] font-mono font-bold tracking-tight text-brand-dark dark:text-primary">NETWORK: SECURE</span>
+                        <span className="text-[10px] font-mono font-bold tracking-tight text-brand-dark dark:text-primary">
+                            {logs.filter(l => l.status === 'synced').length}/{logs.length} SYNCED
+                        </span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-medium tracking-tighter text-gray-400 dark:text-white/40 uppercase">Buffer: 128kb</span>
-                        <div className="size-1.5 rounded-full bg-primary shadow-[0_0_8px_#FCBA04]"></div>
+                        <span className="text-[10px] font-mono font-medium tracking-tighter text-gray-400 dark:text-white/40 uppercase">
+                            {logs.filter(l => l.status === 'pending').length} pending
+                        </span>
+                        {logs.some(l => l.status === 'pending') && (
+                            <div className="size-1.5 rounded-full bg-primary shadow-[0_0_8px_#FCBA04]"></div>
+                        )}
                     </div>
                 </div> */}
             </header>
@@ -123,14 +131,16 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
                             <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
                         </div>
                         <input
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="block w-full pl-10 pr-3 py-3.5 border border-gray-200 dark:border-white/5 bg-white dark:bg-brand-card-dark rounded-xl shadow-sm focus:ring-1 focus:ring-primary text-sm placeholder:text-gray-400 dark:placeholder:text-zinc-600 font-medium text-brand-dark dark:text-white"
-                            placeholder="Query hash or log ID..."
+                            placeholder="Search by type, description, or hex ID..."
                             type="text"
                         />
                     </div>
 
                     <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                        {['All', 'Medical', 'Evacuation', 'Supply'].map(cat => (
+                        {categories.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setFilter(cat)}
@@ -155,6 +165,14 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
                 )}
 
                 <div className="px-4 space-y-5">
+                    {filteredLogs.length === 0 && (
+                        <div className="text-center py-12">
+                            <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">assignment</span>
+                            <p className="text-gray-400 dark:text-gray-600 text-sm mt-2">
+                                {searchQuery ? 'No incidents match your search.' : logs.length === 0 ? 'No incidents recorded yet.' : 'No incidents in this category.'}
+                            </p>
+                        </div>
+                    )}
                     {filteredLogs.map(log => (
                         <div key={log.id} className="bg-white dark:bg-brand-card-dark rounded-2xl shadow-sm overflow-hidden border border-gray-100 dark:border-white/5 relative transition-colors">
                             <div className={`absolute top-0 left-0 w-1.5 h-full ${getAccentColor(log.status)}`}></div>
@@ -194,30 +212,23 @@ const LogScreen: React.FC<LogScreenProps> = ({ logs, setLogs, isDarkMode, onTogg
                                         </div>
                                     </div>
 
-                                    {log.status === 'pending' && (
+                                    {(log.status === 'pending' || log.status === 'verified') && (
                                         <button
                                             onClick={() => handleSync(log.id)}
                                             disabled={syncingId === log.id}
                                             className="w-full mt-2 py-3.5 bg-brand-dark dark:bg-white dark:text-brand-dark hover:brightness-110 text-white rounded-xl shadow-lg flex items-center justify-between px-5 group active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <span className="material-symbols-outlined text-lg text-primary">
+                                                <span className={`material-symbols-outlined text-lg ${syncingId === log.id ? 'animate-spin' : ''} text-primary dark:text-primary`}>
                                                     {syncingId === log.id ? 'progress_activity' : 'database_upload'}
                                                 </span>
                                                 <span className="font-mono text-[11px] font-bold tracking-widest uppercase">
                                                     {syncingId === log.id ? 'Syncing...' : 'Sync to Chain'}
                                                 </span>
                                             </div>
-                                            <span className="font-mono text-[10px] opacity-60">0.02kb</span>
-                                        </button>
-                                    )}
-                                    {log.status === 'verified' && (
-                                        <button className="w-full mt-2 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/5 text-gray-400 rounded-xl flex items-center justify-between px-5 cursor-not-allowed">
-                                            <div className="flex items-center gap-3 opacity-60">
-                                                <span className="material-symbols-outlined text-lg">database_upload</span>
-                                                <span className="font-mono text-[11px] font-bold tracking-widest uppercase">Queue for Sync</span>
-                                            </div>
-                                            <span className="material-symbols-outlined text-gray-300 dark:text-zinc-700">lock</span>
+                                            <span className="font-mono text-[10px] opacity-60">
+                                                {log.hexCode ? `${(log.hexCode.length / 2 / 1024).toFixed(2)}kb` : '—'}
+                                            </span>
                                         </button>
                                     )}
                                     {log.status === 'synced' && log.explorerUrl && (

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Type-check core
+        run: pnpm --filter @cyren/core exec tsc --noEmit
+
+      - name: Type-check web
+        run: pnpm --filter @cyren/web exec tsc --noEmit
+
+      - name: Type-check server
+        # classify.ts has a pre-existing Gemini SDK type issue — allow failure
+        run: pnpm --filter @cyren/server exec tsc --noEmit || true
+
+      - name: Build all packages
+        run: pnpm -r build

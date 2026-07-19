@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { decodePCM } from '@echosign/acoustic';
-import { bytesToHex } from '@echosign/core';
+import { decodePCM } from '@cyren/acoustic';
+import { bytesToHex } from '@cyren/core';
 import fs from 'fs';
 
 export const listenCmd = new Command('listen')

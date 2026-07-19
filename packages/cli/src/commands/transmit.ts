@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { hexToBytes } from '@echosign/core';
-import { encodeToTones, tonesToPCM } from '@echosign/acoustic';
+import { hexToBytes } from '@cyren/core';
+import { encodeToTones, tonesToPCM } from '@cyren/acoustic';
 import fs from 'fs';
 
 export const transmitCmd = new Command('transmit')
